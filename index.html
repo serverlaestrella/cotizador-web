@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Presupuesto & ROI - Server La Estrella</title>
+
+    <!-- Tailwind CSS CDN oficial -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fuente Inter de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #170609;
+        --bg-soft: #25090f;
+        --panel: #2d0c15;
+        --panel-light: #39101c;
+        --wine: #761b36;
+        --wine-bright: #a62b4c;
+        --gold: #ffd84a;
+        --gold-soft: #f0bd37;
+        --text: #fff8f2;
+        --muted: #cbb8bd;
+        --line: rgba(255, 216, 74, 0.17);
+      }
+
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        background:
+          radial-gradient(
+            ellipse at 80% 20%,
+            rgba(118, 27, 54, 0.25),
+            transparent 50%
+          ),
+          var(--bg);
+        color: var(--text);
+      }
+
+      .app-card {
+        background: linear-gradient(145deg, #2b0b14, #21080e);
+        border: 1px solid rgba(255, 216, 74, 0.22);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      }
+
+      .app-header {
+        background: linear-gradient(135deg, var(--wine) 0%, #39101c 100%);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .custom-select {
+        background-color: #1c070c;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: var(--text);
+      }
+
+      .custom-select:focus {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(255, 216, 74, 0.1);
+      }
+
+      .btn-gold {
+        background: linear-gradient(120deg, var(--gold), #f4b82c);
+        color: #241007;
+        box-shadow: 0 8px 28px rgba(255, 216, 74, 0.16);
+      }
+
+      .btn-gold:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex justify-center items-center p-3 sm:p-6">
+    <!-- Contenedor Principal de la Mini App -->
+    <main
+      class="w-full max-w-lg app-card rounded-[20px] overflow-hidden flex flex-col"
+    >
+      <!-- Encabezado de Marca con Logo -->
+      <header class="app-header p-5 relative">
+        <div class="flex items-center justify-between mb-3">
+          <!-- Logo y Nombre de la Empresa -->
+          <div class="flex items-center gap-3">
+            <img
+              src="img/logoServerLE.jpg"
+              alt="Logo Server La Estrella"
+              class="w-10 h-10 object-cover rounded-full border border-[#ffd84a]/50 shadow-sm"
+            />
+            <div>
+              <span class="text-xs text-[#fff8f2] font-bold tracking-wide block"
+                >Server La Estrella</span
+              >
+              <span class="text-[10px] text-[#ffd84a] font-medium"
+                >Ing. Hans Wunder</span
+              >
+            </div>
+          </div>
+          <span
+            class="bg-[#170609]/60 text-[#ffd84a] text-[11px] font-semibold px-2.5 py-1 rounded-full border border-[#ffd84a]/30 backdrop-blur-sm"
+          >
+            ⚡ Transparencia Garantizada
+          </span>
+        </div>
+        <h1 class="text-xl font-bold tracking-tight text-[#fff8f2]">
+          Cotizador de Software Web
+          <span class="text-[#ffd84a]">& Infraestructura</span>
+        </h1>
+        <p class="text-xs text-[#cbb8bd] mt-1">
+          Estimación instantánea, sin letras chicas ni costos ocultos
+        </p>
+      </header>
+
+      <!-- Formulario Interactivo -->
+      <section class="p-5 space-y-5 flex-1">
+        <!-- Paso 1: Alcance del Proyecto -->
+        <div class="space-y-2">
+          <label
+            class="text-xs font-bold uppercase tracking-wider text-[#ffd84a]"
+            >1. Tipo de Solución Web</label
+          >
+          <select
+            id="scopeSelect"
+            class="w-full custom-select text-sm rounded-xl p-3 outline-none transition"
+          >
+            <option value="landing">Landing Page / Sitio Corporativo</option>
+            <option value="ecommerce">E-commerce / Catálogo Interactivo</option>
+            <option value="custom_app" selected>
+              Aplicación Web a Medida (Base de datos + Panel Admin)
+            </option>
+          </select>
+        </div>
+
+        <!-- Paso 2: Complejidad de Base de Datos -->
+        <div class="space-y-2">
+          <label
+            class="text-xs font-bold uppercase tracking-wider text-[#ffd84a]"
+            >2. Backend y Base de Datos</label
+          >
+          <select
+            id="dbSelect"
+            class="w-full custom-select text-sm rounded-xl p-3 outline-none transition"
+          >
+            <option value="static">Sin Base de Datos / Estático</option>
+            <option value="crud_basic">
+              BD Relacional Simple (CRUD básico)
+            </option>
+            <option value="advanced" selected>
+              Arquitectura Avanzada (Roles, APIs, Analítica)
+            </option>
+          </select>
+        </div>
+
+        <!-- Paso 3: Integraciones -->
+        <div class="space-y-2">
+          <label
+            class="text-xs font-bold uppercase tracking-wider text-[#ffd84a]"
+            >3. Integraciones Externas</label
+          >
+          <select
+            id="integrationSelect"
+            class="w-full custom-select text-sm rounded-xl p-3 outline-none transition"
+          >
+            <option value="none">Sin Integraciones Externas</option>
+            <option value="payments_notifications" selected>
+              Pasarela de Pagos / Notificaciones (WhatsApp/Email)
+            </option>
+            <option value="erp_crm">
+              Integración con ERP / CRM / Sistemas Legacy
+            </option>
+          </select>
+        </div>
+
+        <!-- Paso 4: Dominio y Alojamiento (Hosting) transparente -->
+        <div
+          class="space-y-2 bg-[#1c070c]/80 p-3.5 rounded-2xl border border-[#ffd84a]/20"
+        >
+          <div class="flex justify-between items-center">
+            <label
+              class="text-xs font-bold uppercase tracking-wider text-[#ffd84a]"
+              >4. Dominio y Alojamiento (Hosting)</label
+            >
+            <span
+              class="text-[10px] bg-[#ffd84a]/10 text-[#ffd84a] px-2 py-0.5 rounded-md border border-[#ffd84a]/30 font-semibold"
+              >100% a tu nombre</span
+            >
+          </div>
+          <select
+            id="hostingSelect"
+            class="w-full custom-select text-sm rounded-xl p-3 outline-none transition"
+          >
+            <option value="none">
+              El cliente ya cuenta con Dominio y Hosting propios
+            </option>
+            <option value="standard" selected>
+              Dominio (.com/.com.bo) + Hosting Estándar (1er Año Incluido)
+            </option>
+            <option value="vps">
+              Dominio (.com/.com.bo) + Servidor VPS Dedicado (Alto
+              Rendimiento/Seguridad)
+            </option>
+          </select>
+          <p class="text-[11px] text-[#cbb8bd] leading-relaxed pt-1">
+            💡
+            <strong class="text-[#fff8f2]">Garantía de Transparencia:</strong>
+            Los accesos de administración se entregan directos al cliente. Las
+            renovaciones posteriores se pagan directamente al proveedor oficial
+            sin cargos sorpresas ni intermediarios abusivos.
+          </p>
+        </div>
+
+        <!-- Paso 5: Nivel de Diseño UI/UX -->
+        <div class="space-y-2">
+          <label
+            class="text-xs font-bold uppercase tracking-wider text-[#ffd84a]"
+            >5. Diseño de Interfaz UI/UX</label
+          >
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              id="btnUiStandard"
+              onclick="setUiDesign('standard')"
+              class="py-2.5 px-3 text-xs font-bold bg-[#ffd84a] text-[#241007] rounded-xl border border-[#ffd84a] shadow-sm transition"
+            >
+              Componentes Estándar
+            </button>
+            <button
+              type="button"
+              id="btnUiCustom"
+              onclick="setUiDesign('custom_ui')"
+              class="py-2.5 px-3 text-xs font-medium bg-[#1c070c] text-[#cbb8bd] rounded-xl border border-white/15 hover:border-[#ffd84a]/50 transition"
+            >
+              100% Personalizado
+            </button>
+          </div>
+        </div>
+
+        <!-- Botón de Acción Principal -->
+        <button
+          type="button"
+          onclick="handleCalculate()"
+          class="w-full btn-gold font-bold text-sm py-3.5 px-4 rounded-xl transition active:scale-[0.98]"
+        >
+          ⚡ Calcular Inversión Real y Transparente
+        </button>
+
+        <!-- Tarjeta de Resultados (Se revela dinámicamente) -->
+        <div
+          id="resultsCard"
+          class="bg-[#1c070c] border border-[#ffd84a]/25 rounded-2xl p-4 space-y-4 mt-4 hidden"
+        >
+          <div class="border-b border-[#ffd84a]/15 pb-3">
+            <span class="text-xs text-[#cbb8bd] block mb-1"
+              >Inversión Total Estimada del Proyecto:</span
+            >
+            <span
+              id="txtBudgetRange"
+              class="text-2xl font-extrabold text-[#ffd84a]"
+              >$0 USD</span
+            >
+            <span
+              id="txtHostingNote"
+              class="text-[11px] text-[#fff8f2]/90 block mt-1 font-medium"
+              >✓ Incluye configuración inicial de dominio y hosting.</span
+            >
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <div class="bg-[#2d0c15] p-3 rounded-xl border border-[#ffd84a]/15">
+              <span class="text-[11px] text-[#cbb8bd] block"
+                >Retorno Estimado (Payback)</span
+              >
+              <span id="txtPayback" class="text-lg font-bold text-[#ffd84a]"
+                >~0 meses</span
+              >
+            </div>
+            <div class="bg-[#2d0c15] p-3 rounded-xl border border-[#ffd84a]/15">
+              <span class="text-[11px] text-[#cbb8bd] block"
+                >Ahorro Mensual</span
+              >
+              <span
+                id="txtMonthlySavings"
+                class="text-lg font-bold text-[#fff8f2]"
+                >~$0 USD</span
+              >
+            </div>
+          </div>
+
+          <!-- Botón de Conversión para WhatsApp -->
+          <a
+            id="btnWhatsapp"
+            href="#"
+            target="_blank"
+            class="w-full bg-[#761b36] hover:bg-[#a62b4c] border border-[#ffd84a]/40 text-[#fff8f2] font-semibold text-xs py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition"
+          >
+            <svg
+              class="w-4 h-4 fill-current text-[#ffd84a]"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.762.459 3.48 1.332 5.001l-1.416 5.169 5.291-1.387c1.472.802 3.131 1.224 4.779 1.225h.004c5.506 0 9.99-4.478 9.99-9.985 0-2.667-1.038-5.176-2.924-7.062-1.886-1.886-4.394-2.925-7.066-2.925zm0 1.667c4.588 0 8.324 3.732 8.325 8.318 0 2.222-.865 4.312-2.438 5.885-1.573 1.573-3.663 2.438-5.887 2.438h-.003c-1.428 0-2.835-.383-4.068-1.107l-.292-.172-3.025.792.807-2.946-.189-.301c-.796-1.267-1.217-2.738-1.217-4.249 0-4.586 3.737-8.318 8.327-8.318z"
+              />
+            </svg>
+            Enviar cotización desglosada al WhatsApp
+          </a>
+        </div>
+      </section>
+
+      <!-- Footer de Mini App Actualizado -->
+      <footer
+        class="bg-[#130407] p-3 text-center border-t border-[#ffd84a]/15 text-[11px] text-[#cbb8bd] space-y-1"
+      >
+        <div>© 2026 Server La Estrella. Todos los derechos reservados.</div>
+        <div>
+          Desarrollado por
+          <span class="text-[#ffd84a] font-medium">Server La Estrella</span> ·
+          Ing. Hans Wunder
+        </div>
+      </footer>
+    </main>
+
+    <!-- Script Unificado Integrado -->
+    <script>
+      const PRICING_CONFIG = {
+        scope: {
+          landing: {
+            label: "Landing Page / Sitio Corporativo",
+            basePrice: 800,
+            baseHoursSaved: 10,
+          },
+          ecommerce: {
+            label: "E-commerce / Catálogo Interactivo",
+            basePrice: 1500,
+            baseHoursSaved: 20,
+          },
+          custom_app: {
+            label: "Aplicación Web a Medida (Base de datos + Panel Admin)",
+            basePrice: 2500,
+            baseHoursSaved: 35,
+          },
+        },
+        databaseComplexity: {
+          static: { label: "Sin Base de Datos / Estático", multiplier: 1.0 },
+          crud_basic: {
+            label: "Base de Datos Relacional Simple (CRUD)",
+            multiplier: 1.25,
+          },
+          advanced: {
+            label: "Arquitectura Avanzada (Roles, APIs externas, analítica)",
+            multiplier: 1.5,
+          },
+        },
+        integrations: {
+          none: { label: "Sin Integraciones Externas", addOnPrice: 0 },
+          payments_notifications: {
+            label: "Pasarela de Pagos / Notificaciones",
+            addOnPrice: 300,
+          },
+          erp_crm: {
+            label: "Integración con ERP/CRM o Sistemas Legacy",
+            addOnPrice: 600,
+          },
+        },
+        hosting: {
+          none: {
+            label: "Cliente con infraestructura propia",
+            addOnPrice: 0,
+            note: "Sin costo de infraestructura adicional.",
+          },
+          standard: {
+            label: "Dominio + Hosting Estándar (1er Año)",
+            addOnPrice: 80,
+            note: "✓ Incluye registro de dominio y hosting estándar el primer año.",
+          },
+          vps: {
+            label: "Dominio + Servidor VPS Dedicado",
+            addOnPrice: 220,
+            note: "✓ Incluye dominio y servidor VPS optimizado de alto rendimiento.",
+          },
+        },
+        uiDesign: {
+          standard: {
+            label: "Componentes Estándar Optimizados",
+            multiplier: 1.0,
+          },
+          custom_ui: {
+            label: "Diseño UI/UX 100% Personalizado e Interactivo",
+            multiplier: 1.2,
+          },
+        },
+        financials: {
+          averageHourlyRateUSD: 20,
+          minRangeFactor: 0.9,
+          maxRangeFactor: 1.15,
+        },
+      };
+
+      let currentUiKey = "standard";
+
+      function setUiDesign(key) {
+        currentUiKey = key;
+        const btnStandard = document.getElementById("btnUiStandard");
+        const btnCustom = document.getElementById("btnUiCustom");
+
+        const activeClass =
+          "py-2.5 px-3 text-xs font-bold bg-[#ffd84a] text-[#241007] rounded-xl border border-[#ffd84a] shadow-sm transition";
+        const inactiveClass =
+          "py-2.5 px-3 text-xs font-medium bg-[#1c070c] text-[#cbb8bd] rounded-xl border border-white/15 hover:border-[#ffd84a]/50 transition";
+
+        if (key === "standard") {
+          btnStandard.className = activeClass;
+          btnCustom.className = inactiveClass;
+        } else {
+          btnCustom.className = activeClass;
+          btnStandard.className = inactiveClass;
+        }
+      }
+
+      function calculateBudget(inputs) {
+        const scopeConfig =
+          PRICING_CONFIG.scope[inputs.scopeKey] || PRICING_CONFIG.scope.landing;
+        const dbConfig =
+          PRICING_CONFIG.databaseComplexity[inputs.dbKey] ||
+          PRICING_CONFIG.databaseComplexity.static;
+        const integrationConfig =
+          PRICING_CONFIG.integrations[inputs.integrationKey] ||
+          PRICING_CONFIG.integrations.none;
+        const hostingConfig =
+          PRICING_CONFIG.hosting[inputs.hostingKey] ||
+          PRICING_CONFIG.hosting.none;
+        const uiConfig =
+          PRICING_CONFIG.uiDesign[inputs.uiKey] ||
+          PRICING_CONFIG.uiDesign.standard;
+
+        const basePrice = Math.round(
+          scopeConfig.basePrice * dbConfig.multiplier * uiConfig.multiplier +
+            integrationConfig.addOnPrice +
+            hostingConfig.addOnPrice,
+        );
+        const minBudget = Math.round(
+          basePrice * PRICING_CONFIG.financials.minRangeFactor,
+        );
+        const maxBudget = Math.round(
+          basePrice * PRICING_CONFIG.financials.maxRangeFactor,
+        );
+
+        return {
+          basePrice,
+          minBudget,
+          maxBudget,
+          formattedRange: `$${minBudget.toLocaleString()} - $${maxBudget.toLocaleString()} USD`,
+          details: {
+            scopeLabel: scopeConfig.label,
+            dbLabel: dbConfig.label,
+            integrationLabel: integrationConfig.label,
+            hostingLabel: hostingConfig.label,
+            hostingNote: hostingConfig.note,
+            uiLabel: uiConfig.label,
+            baseHoursSaved: scopeConfig.baseHoursSaved,
+          },
+        };
+      }
+
+      function calculateROI(baseBudget, baseHoursSaved) {
+        const hourlyRate = PRICING_CONFIG.financials.averageHourlyRateUSD;
+        const monthlySavingsUSD = baseHoursSaved * hourlyRate;
+        const paybackMonths = Number(
+          (baseBudget / monthlySavingsUSD).toFixed(1),
+        );
+
+        return {
+          monthlyHoursSaved: baseHoursSaved,
+          monthlySavingsUSD,
+          paybackMonths,
+          formattedPayback: `${paybackMonths} meses`,
+        };
+      }
+
+      function generateWhatsAppLink(
+        budgetResult,
+        roiResult,
+        phoneNumber = "59164617107",
+      ) {
+        const cleanPhone = phoneNumber.replace(/\D/g, "");
+
+        const message =
+          `¡Hola Ing. Hans Wunder (Server La Estrella)! \n` +
+          `Usé tu cotizador web transparente y obtuve este desglose:\n\n` +
+          ` *Detalles del Proyecto:*\n` +
+          `• Solución: ${budgetResult.details.scopeLabel}\n` +
+          `• Base de Datos: ${budgetResult.details.dbLabel}\n` +
+          `• Integraciones: ${budgetResult.details.integrationLabel}\n` +
+          `• Dominio y Hosting: ${budgetResult.details.hostingLabel}\n` +
+          `• Diseño UI/UX: ${budgetResult.details.uiLabel}\n\n` +
+          ` *Inversión Total Estimada:* ${budgetResult.formattedRange}\n` +
+          ` *Ahorro Operativo:* ~$${roiResult.monthlySavingsUSD} USD/mes (${roiResult.monthlyHoursSaved} hrs/mes)\n` +
+          ` *Retorno (Payback):* ~${roiResult.formattedPayback}\n\n` +
+          `Me interesa avanzar bajo esta modalidad transparente y a mi nombre. ¿Cómo procedemos?`;
+
+        return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+      }
+
+      function handleCalculate() {
+        const inputs = {
+          scopeKey: document.getElementById("scopeSelect").value,
+          dbKey: document.getElementById("dbSelect").value,
+          integrationKey: document.getElementById("integrationSelect").value,
+          hostingKey: document.getElementById("hostingSelect").value,
+          uiKey: currentUiKey,
+        };
+
+        const budget = calculateBudget(inputs);
+        const roi = calculateROI(
+          budget.basePrice,
+          budget.details.baseHoursSaved,
+        );
+        const whatsappUrl = generateWhatsAppLink(budget, roi, "59164617107");
+
+        // Actualizar tarjeta de resultados
+        document.getElementById("txtBudgetRange").innerText =
+          budget.formattedRange;
+        document.getElementById("txtHostingNote").innerText =
+          budget.details.hostingNote;
+        document.getElementById("txtPayback").innerText =
+          `~${roi.formattedPayback}`;
+        document.getElementById("txtMonthlySavings").innerText =
+          `~$${roi.monthlySavingsUSD} USD`;
+        document.getElementById("btnWhatsapp").href = whatsappUrl;
+
+        // Revelar tarjeta y desplazarse suavemente
+        const resultsCard = document.getElementById("resultsCard");
+        resultsCard.classList.remove("hidden");
+        resultsCard.scrollIntoView({ behavior: "smooth" });
+      }
+    </script>
+  </body>
+</html>
